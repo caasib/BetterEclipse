@@ -15,6 +15,7 @@ public class LyricPuzzle {
     private Random rand = new Random();
 
     public ArrayList<String> splitLyric() {
+        System.out.println(colors);
         String fullLyric = allLyrics[rand.nextInt(allLyrics.length)];
         ArrayList<String> splitLyricArray = new ArrayList<String>();
         Pattern pattern = Pattern.compile("\\S+(\\s\\S+)?");
@@ -56,26 +57,42 @@ public class LyricPuzzle {
     continue for loop until done
      */
     public void matchSegmentColors() {
-        ArrayList<PuzzleSegment> tempColorMatch = new ArrayList<PuzzleSegment>();
+        ArrayList<ArrayList<PuzzleSegment>> colorLists = new ArrayList<ArrayList<PuzzleSegment>>();
         for (int i = 0; i < segments.size(); i++) {
-            for (int j = 0; j < segments.size(); j++) {
+            ArrayList<PuzzleSegment> tempColorMatch = new ArrayList<PuzzleSegment>();
+            colorLists.add(tempColorMatch);
+            for (int j = 0; j < segments.size(); i++) {
                 if (segments.get(i).getFullLyric().equals(segments.get(j).getFullLyric())) {
                     if ((segments.get(i).getColor() != null) || (segments.get(j).getColor() != null)) {
                         tempColorMatch.add(segments.get(j));
                     }
                 }
             }
-            String randColor = colors.get(rand.nextInt(colors.size()));
-            for (int k = 0; k < tempColorMatch.size(); k++) {
-                tempColorMatch.get(k).setColor(randColor);
-            }
-            tempColorMatch.clear();
-            colors.remove(randColor);
-            if (colors.isEmpty()) {
-                cleanSegmentsArray();
-                break;
-            }
         }
+        for (int k = 0; k < colorLists.size(); k++) {
+
+        }
+//        ArrayList<PuzzleSegment> tempColorMatch = new ArrayList<PuzzleSegment>();
+//        for (int i = 0; i < segments.size(); i++) {
+//            for (int j = 0; j < segments.size(); j++) {
+//                if (segments.get(i).getFullLyric().equals(segments.get(j).getFullLyric())) {
+//                    if ((segments.get(i).getColor() != null) || (segments.get(j).getColor() != null)) {
+//                        tempColorMatch.add(segments.get(j));
+//                    }
+//                }
+//            }
+//            String randColor = colors.get(rand.nextInt(colors.size()));
+//            for (int k = 0; k < tempColorMatch.size(); k++) {
+//                tempColorMatch.get(k).setColor(randColor);
+//            }
+//            tempColorMatch.clear();
+//            colors.remove(randColor);
+//            System.out.println(colors);
+//            if (colors.isEmpty()) {
+//                cleanSegmentsArray();
+//                break;
+//            }
+//        }
     }
 
     public void test() {
