@@ -11,6 +11,7 @@ public class PuzzleSegment {
     public PuzzleSegment(String lyric) {
         this.lyric = lyric;
     }
+    //No default constructor because it would be wonky to get it working
 
     //Getters and Setters
     public String getLyric() {
