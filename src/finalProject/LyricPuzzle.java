@@ -52,17 +52,6 @@ public class LyricPuzzle {
         }
     }
 
-    //I don't think I'll ever need this method, but it doesn't hurt to keep it as a comment just in case
-/*
-    public void removeNullSegments() {
-        for (int i = 0; i < segments.size(); i++) {
-            if (segments.get(i).getColor() == null) {
-                segments.remove(i);
-            }
-        }
-    }
-*/
-
     public ArrayList<ArrayList<PuzzleSegment>> groupSameSegments() { //It's ArrayLists all the way down!
         ArrayList<ArrayList<PuzzleSegment>> colorLists = new ArrayList<ArrayList<PuzzleSegment>>();
         ArrayList<PuzzleSegment> tempColorMatch = null; //This is a flag to see the last ArrayList made
@@ -111,24 +100,28 @@ public class LyricPuzzle {
     Even if a piece doesn't match, keep it in the same position and count the move
     If there is a singular lyric of one color, count it as a match and delete it from the board
      */
-    public ArrayList<Integer> findDivisors() { //This is just to make the display nicer and adaptable, since the amount of elements in the
-        //segments ArrayList is variable
+    public int findMiddleDivisor() {
+        /* Using the middle divisor, I can make the display look more even
+        For example, if segments.size() = 20, then instead of having something like 2 rows and 10 columns, I can instead find the middle
+        factors of 20 and get 4 rows and 5 columns, which looks a lot better
+        Of course, if the number is prime or the factors have a large difference between them, it's gonna look bad anyway, but what can you do?
+        */
         ArrayList<Integer> divisors = new ArrayList<Integer>();
         for (int i = 1; i < segments.size()+1; i++) {
             if (segments.size() % i == 0) {
                 divisors.add(i);
             }
         }
-        return divisors;
+        int middleDivisor = divisors.get((divisors.size() - 1)/2); //Finds the middle value in the divisors arrayList
+        return middleDivisor;
     }
 
     public void displayBoard() { //Big thanks to Kenzie for helping me do basic math
-        ArrayList<Integer> divisors = findDivisors();
-        int rows = divisors.get((divisors.size() - 1)/2); //Finds the middle value in the divisors arrayList
-        //From here, because it's a 1D array, I'm just going to iterate over the array the normal way and then check to see if we're at one of
-        //the row numbers so that it can split up the rows
+        //Because it's a 1D array, I'm just going to iterate over the array the normal way and then check to see if we're at the end
+        //of the column so that it can split up the rows
+        int columns = findMiddleDivisor();
         for (int i = 0; i < segments.size(); i++) {
-            if ((i % rows == 0 ) && (i != 0)) {
+            if ((i % columns == 0 ) && (i != 0)) {
                 System.out.println();
             }
             System.out.printf("%-15s   ", segments.get(i).getLyric()); //Strings take up 15 spaces and I add a few spaces for niceness
@@ -161,26 +154,49 @@ public class LyricPuzzle {
     //repeated code
     public boolean checkForMatch(PuzzleSegment selectedSegment) { //Check the left and right of the piece to see if there was a match
         boolean match = false;
-        ArrayList<Integer> divisors = findDivisors();
-        int rows = divisors.get((divisors.size() - 1)/2); //Need to know where the row breaks are so I know when to check left or right
+        int columns = findMiddleDivisor();
         int segmentIndex = segments.indexOf(selectedSegment);
-        if (segmentIndex % rows == 0) {
-            checkRightMatch(selectedSegment);
+        if (segmentIndex % columns == 0) {
+            if (checkRightMatch(selectedSegment)) {
+                match = true;
+            }
         }
-        else if ((segmentIndex + 1) % rows == 0) {
-            checkLeftMatch(selectedSegment);
+        else if ((segmentIndex + 1) % columns == 0) {
+            if (checkLeftMatch(selectedSegment)) {
+                match = true;
+            }
         }
         else {
-            checkLeftMatch(selectedSegment);
-            checkRightMatch(selectedSegment);
+            if ((checkLeftMatch(selectedSegment) || checkRightMatch(selectedSegment))) {
+                match = true;
+            }
         }
         return match;
     }
 
-    public int selectPiece(int row, int column) {
-        int pieceIndex = 0;
-        return pieceIndex;
+    public int segmentPositionInArray(int row, int column) {
+        int columns = findMiddleDivisor(); //Need to find a way to give this a wider scope so that I don't have to constantly run this method
+        /* Because this is a 1D array, I have to be a little creative with the math in order to get this to work.
+        To visualize:
+        (0,0) (0,1) (0,2)
+        (1,0) (1,1) (1,2)
+        (2,0) (2,1) (2,2)
+        Consider an input of row 1, column 2 (1,2). With the way that the grid is displayed, that would be the 5th item in the array.
+        There are 3 columns, so when we plug everything in, we get (1 * 3) + 2 = 5.
+        Now, even without using a 2D array like in the vending machine project, I can still get the correct index for the item I want.
+         */
+        return (row * columns) + column;
     }
+
+    public boolean isValidMove(int originalSegment, int segmentToSwap) {
+        boolean valid = false;
+        int columns = findMiddleDivisor();
+        if ((originalSegment - 1 == segmentToSwap) || (originalSegment + 1 == segmentToSwap) || (originalSegment + columns == segmentToSwap) || (originalSegment - columns == segmentToSwap)) {
+            valid = true;
+        }
+        return valid;
+    }
+
 
     public void test() {
         Collections.shuffle(Arrays.asList(allLyrics)); //This prevents repetition without me having to do a bunch of checks
