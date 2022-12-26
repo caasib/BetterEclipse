@@ -11,12 +11,12 @@ public class LyricPuzzle {
     public static String[] allLyrics = {"Baby, keep on dancing like you ain't got a choice", "She got a light-skinned friend look like Michael Jackson",
             "A falling star fell from your heart and landed in my eyes", "But you in LA, and I'm out at Jermaine's", "Now I'm at the White House, looking for your President",
             "So I creep, yeah, cause he doesn't know what I do", "That's why I need a one dance", "Young rebel, Young Money, nothin' you could tell me",
-            "My man is my man, is your man, heard that's her man"};
+            "My man is my man, is your man, heard that's her man"}; //If you have any suggestions, let me know
     private ArrayList<PuzzleSegment> segments = new ArrayList<PuzzleSegment>();
     private ArrayList<String> colors = new ArrayList<String>(Arrays.asList("Red", "Yellow", "Green", "Blue"));
     //Arrays.asList converts an array to a list. I just used it here so that I could initialize an ArrayList with values instead of having to
     //add them later line by line
-    //I could have done the same thing with allLyrics, but I thought it looked ugly that way
+    //I could have done the same thing with allLyrics, but I thought it looked ugly that way ¯\_(ツ)_/¯
     private Random rand = new Random();
     private static int counter = 0;
 
@@ -52,7 +52,7 @@ public class LyricPuzzle {
     }
 */
 
-    public ArrayList<ArrayList<PuzzleSegment>> groupSameSegments() {
+    public ArrayList<ArrayList<PuzzleSegment>> groupSameSegments() { //It's ArrayLists all the way down!
         ArrayList<ArrayList<PuzzleSegment>> colorLists = new ArrayList<ArrayList<PuzzleSegment>>();
         ArrayList<PuzzleSegment> tempColorMatch = null; //This is a flag to see the last ArrayList made
         for (int i = 0; i < segments.size(); i++) {
@@ -88,6 +88,45 @@ public class LyricPuzzle {
         }
     }
 
+    /*
+    Gameplay:
+    Board is a grid of lyrics (coordinate system like battleship)
+    Limited amount of moves in a game
+    To win, match x amount of lyric segments OR put together x amount of full lyrics
+    Select a piece - can move it left, right, up, or down
+    When piece is moved, check pieces around it to see if they are part of the same lyric
+    If they are, then check to see if they are in the right order
+    If they're in the right order, delete from board and increment matches
+    Even if a piece doesn't match, keep it in the same position and count the move
+    If there is a singular lyric of one color, count it as a match and delete it from the board
+     */
+    public ArrayList<Integer> findDivisors() { //This is just to make the display nicer and adaptable, since the amount of elements in the
+        //segments ArrayList is variable
+        ArrayList<Integer> divisors = new ArrayList<Integer>();
+        for (int i = 1; i < segments.size()+1; i++) {
+            if (segments.size() % i == 0) {
+                divisors.add(i);
+            }
+        }
+        return divisors;
+    }
+
+    public void displayBoard() { //Big thanks to Kenzie for helping me do basic math
+        ArrayList<Integer> divisors = findDivisors();
+        int rows = divisors.get((divisors.size() - 1)/2); //Finds the middle value in the divisors arrayList
+        int columns = segments.size() / rows; //If p * q = n, n/p = q; thus, we find the factor that goes with the number for rows so we have
+        //both middle values for rows and columns
+        //This makes the display look a lot more even - rather than just picking some random number and having 1 column and 20 rows, we would
+        //now have 4 rows and 5 columns. Much nicer to look at!
+        System.out.println(rows + " " + columns);
+        for (int i = 0; i < segments.size(); i++) {
+            if ((i % rows == 0 ) && (i != 0)) {
+                System.out.println();
+            }
+            System.out.printf("%-15s \t", segments.get(i).getLyric());
+        }
+    }
+
     public void test() {
         Collections.shuffle(Arrays.asList(allLyrics)); //This prevents repetition without me having to do a bunch of checks
         //There are ways to shuffle without just converting an array to a list and shuffling, but that requires a lot more work
@@ -96,9 +135,7 @@ public class LyricPuzzle {
         makeSegments(splitLyric());
         makeSegments(splitLyric());
         matchSegmentColors(groupSameSegments());
-        for (int i = 0; i < segments.size(); i++) {
-            System.out.println(segments.get(i).getLyric());
-            System.out.println(segments.get(i).getColor());
-        }
+        Collections.shuffle(segments); //Shuffling segments so that all the lyrics don't print out in the right order and ruin the game
+        displayBoard();
     }
 }

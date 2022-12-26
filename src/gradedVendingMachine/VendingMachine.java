@@ -89,6 +89,7 @@ public class VendingMachine {
 		int column = scan.nextInt();
 		System.out.printf("You have selected %s.\n", inventory[row][column].getName());
 		System.out.println("This machine accepts nickels, dimes, quarters, and dollars. Please put in at least $0.25. Do not exceed two dollars.");
+		System.out.println("Pennies are automatically returned to the user.");
 		System.out.println("Please input money for your purchase.");
 		userMoney = scan.nextDouble();
 		double totalPrice = inventory[row][column].getPrice();
