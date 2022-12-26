@@ -8,26 +8,37 @@ import java.util.regex.Matcher;
 import java.util.Collections;
 
 public class LyricPuzzle {
-    public static String[] allLyrics = {"Baby, keep on dancing like you ain't got a choice", "She got a light-skinned friend look like Michael Jackson",
+    protected static String[] allLyrics = {"Baby, keep on dancing like you ain't got a choice", "She got a light-skinned friend look like Michael Jackson",
             "A falling star fell from your heart and landed in my eyes", "But you in LA, and I'm out at Jermaine's", "Now I'm at the White House, looking for your President",
             "So I creep, yeah, cause he doesn't know what I do", "That's why I need a one dance", "Young rebel, Young Money, nothin' you could tell me",
             "My man is my man, is your man, heard that's her man"}; //If you have any suggestions, let me know
+    //The allLyrics array is protected rather than private and static so that it can be referenced in the PuzzleSegment class in order for the
+    //getFullLyric() method to work
     private ArrayList<PuzzleSegment> segments = new ArrayList<PuzzleSegment>();
     private ArrayList<String> colors = new ArrayList<String>(Arrays.asList("Red", "Yellow", "Green", "Blue"));
     //Arrays.asList converts an array to a list. I just used it here so that I could initialize an ArrayList with values instead of having to
     //add them later line by line
     //I could have done the same thing with allLyrics, but I thought it looked ugly that way ¯\_(ツ)_/¯
     private Random rand = new Random();
-    private static int counter = 0;
+    private int counter = 0;
 
     public ArrayList<String> splitLyric() {
         String fullLyric = allLyrics[counter];
         ++counter; //This way it always gives you something different when you call splitLyric(). I only call it 4 times, so no worries about
         //accidentally calling an index which is out of bounds
         ArrayList<String> splitLyricArray = new ArrayList<String>();
-        Pattern pattern = Pattern.compile("\\S+(\\s\\S+)?"); //Trying to do .split() for spaces is too complicated, and the only ways
+        Pattern pattern = Pattern.compile("\\S+(\\s\\S+)?"); //Trying to do .split() for every 2 spaces is too complicated, and the only ways
         //that I could find were broken because they relied on an old bug with the lookbehind regex. Instead, Pattern and Matcher regex is much
-        //easier to use and understand and gives me the same result
+        //easier to use and understand and gives me the result I'm looking for.
+        /*
+        A quick explanation:
+        The regex "\S+(\s\S+)? finds and groups together every 2 words. \S matches non-whitespace characters and \s matches whitespace.
+        Basically, it looks for a non-whitespace character, and then it looks for the group of a whitespace character and another
+        non-whitespace character. The \S+ means that it looks for one or more non-whitespace characters; as many as it can find.
+        The ? means that it matches for the group of a whitespace character and then as many non-whitespace characters as possible
+        0-1 times.
+        The double \ in the actual code is because you have to escape special characters. Nothing big there.
+        */
         Matcher matcher = pattern.matcher(fullLyric);
         while (matcher.find()) {
             splitLyricArray.add(matcher.group());
@@ -94,7 +105,7 @@ public class LyricPuzzle {
     Limited amount of moves in a game
     To win, match x amount of lyric segments OR put together x amount of full lyrics
     Select a piece - can move it left, right, up, or down
-    When piece is moved, check pieces around it to see if they are part of the same lyric
+    When piece is moved, check pieces to the left and right of it to see if they are part of the same lyric
     If they are, then check to see if they are in the right order
     If they're in the right order, delete from board and increment matches
     Even if a piece doesn't match, keep it in the same position and count the move
@@ -114,17 +125,61 @@ public class LyricPuzzle {
     public void displayBoard() { //Big thanks to Kenzie for helping me do basic math
         ArrayList<Integer> divisors = findDivisors();
         int rows = divisors.get((divisors.size() - 1)/2); //Finds the middle value in the divisors arrayList
-        int columns = segments.size() / rows; //If p * q = n, n/p = q; thus, we find the factor that goes with the number for rows so we have
-        //both middle values for rows and columns
-        //This makes the display look a lot more even - rather than just picking some random number and having 1 column and 20 rows, we would
-        //now have 4 rows and 5 columns. Much nicer to look at!
-        System.out.println(rows + " " + columns);
+        //From here, because it's a 1D array, I'm just going to iterate over the array the normal way and then check to see if we're at one of
+        //the row numbers so that it can split up the rows
         for (int i = 0; i < segments.size(); i++) {
             if ((i % rows == 0 ) && (i != 0)) {
                 System.out.println();
             }
-            System.out.printf("%-15s \t", segments.get(i).getLyric());
+            System.out.printf("%-15s   ", segments.get(i).getLyric()); //Strings take up 15 spaces and I add a few spaces for niceness
+            //I could have used \t, but I didn't like how large the gap was. It's better to have things closer together since this will
+            //be a matching game
         }
+    }
+
+    //I hate repeating code too much, so now these will be 2 separate methods for either direction
+    //They still repeat code, but I think it looks better this way
+    public boolean checkLeftMatch(PuzzleSegment selectedSegment) {
+        boolean match = false;
+        int segmentIndex = segments.indexOf(selectedSegment);
+        if (selectedSegment.getFullLyric().equals(segments.get(segmentIndex - 1).getFullLyric())) {
+            match = true;
+        }
+        return match;
+    }
+
+    public boolean checkRightMatch(PuzzleSegment selectedSegment) {
+        boolean match = false;
+        int segmentIndex = segments.indexOf(selectedSegment);
+        if (selectedSegment.getFullLyric().equals(segments.get(segmentIndex + 1).getFullLyric())) {
+            match = true;
+        }
+        return match;
+    }
+
+    //And now, the main checkForMatch method which combines the two previous methods and makes this method look a lot nicer with a lot less
+    //repeated code
+    public boolean checkForMatch(PuzzleSegment selectedSegment) { //Check the left and right of the piece to see if there was a match
+        boolean match = false;
+        ArrayList<Integer> divisors = findDivisors();
+        int rows = divisors.get((divisors.size() - 1)/2); //Need to know where the row breaks are so I know when to check left or right
+        int segmentIndex = segments.indexOf(selectedSegment);
+        if (segmentIndex % rows == 0) {
+            checkRightMatch(selectedSegment);
+        }
+        else if ((segmentIndex + 1) % rows == 0) {
+            checkLeftMatch(selectedSegment);
+        }
+        else {
+            checkLeftMatch(selectedSegment);
+            checkRightMatch(selectedSegment);
+        }
+        return match;
+    }
+
+    public int selectPiece(int row, int column) {
+        int pieceIndex = 0;
+        return pieceIndex;
     }
 
     public void test() {
