@@ -196,7 +196,7 @@ public class LyricPuzzle {
         }
         return valid;
     }
-
+//
 
     public void test() {
         Collections.shuffle(Arrays.asList(allLyrics)); //This prevents repetition without me having to do a bunch of checks
