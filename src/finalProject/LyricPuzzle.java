@@ -3,6 +3,7 @@ package finalProject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.Collections;
@@ -20,6 +21,7 @@ public class LyricPuzzle {
     //add them later line by line
     //I could have done the same thing with allLyrics, but I thought it looked ugly that way ¯\_(ツ)_/¯
     private Random rand = new Random();
+    private Scanner scan = new Scanner(System.in);
     private int counter = 0;
 
     public ArrayList<String> splitLyric() {
@@ -196,17 +198,53 @@ public class LyricPuzzle {
         }
         return valid;
     }
-//
+
+    public int[] getInput() {
+        System.out.println("Select a segment using the row number and column number. For example: \"1 2\"");
+        String fullInput = scan.nextLine();
+        fullInput = fullInput.trim();
+        String[] strInputArray = fullInput.split("\\s+");
+        System.out.println(Arrays.toString(strInputArray));
+        int[] intArray = new int[2];
+        if (strInputArray.length == 2) {
+            for (int i = 0; i < strInputArray.length; i++) {
+                try {
+                    intArray[i] = Integer.parseInt(strInputArray[i]);
+                } catch (NumberFormatException e) {
+                    System.out.println("Please only input numbers.");
+                    System.out.println(e);
+                    getInput();
+                    break;
+                }
+            }
+            for (int i = 0; i < intArray.length; i++) {
+                if (String.valueOf(intArray[i]).length() > 1) {
+                    System.out.println("Please only input single digit numbers.");
+                    getInput();
+                    break;
+                }
+            }
+
+        }
+        else {
+            System.out.println("Please format your input properly. For example: \"1 2\"");
+            getInput();
+        }
+        System.out.println(Arrays.toString(intArray));
+        System.out.println("ur mom");
+        return intArray;
+    }
 
     public void test() {
-        Collections.shuffle(Arrays.asList(allLyrics)); //This prevents repetition without me having to do a bunch of checks
-        //There are ways to shuffle without just converting an array to a list and shuffling, but that requires a lot more work
-        makeSegments(splitLyric());
-        makeSegments(splitLyric());
-        makeSegments(splitLyric());
-        makeSegments(splitLyric());
-        matchSegmentColors(groupSameSegments());
-        Collections.shuffle(segments); //Shuffling segments so that all the lyrics don't print out in the right order and ruin the game
-        displayBoard();
+//        Collections.shuffle(Arrays.asList(allLyrics)); //This prevents repetition without me having to do a bunch of checks
+//        //There are ways to shuffle without just converting an array to a list and shuffling, but that requires a lot more work
+//        makeSegments(splitLyric());
+//        makeSegments(splitLyric());
+//        makeSegments(splitLyric());
+//        makeSegments(splitLyric());
+//        matchSegmentColors(groupSameSegments());
+//        Collections.shuffle(segments); //Shuffling segments so that all the lyrics don't print out in the right order and ruin the game
+//        displayBoard();
+        getInput();
     }
 }
