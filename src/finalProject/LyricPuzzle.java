@@ -199,29 +199,33 @@ public class LyricPuzzle {
         return valid;
     }
 
-    public int[] getInput() {
+    public int[] getInput() { //This gets the input and makes sure that it is in the correct format
+        //This doesn't check for whether the row or column number picked is one of the actual row or column numbers - that will be done later
+        //Because I'm pulling 2 numbers at once, we'll return an integer array of size 2: [row, column]
         System.out.println("Select a segment using the row number and column number. For example: \"1 2\"");
-        String fullInput = scan.nextLine();
+        String fullInput = scan.nextLine(); //Normally you would use scan.nextInt() twice, but what if the user doesn't give us an integer?
         fullInput = fullInput.trim(); //Removes leading and trailing spaces
         String[] strInputArray = fullInput.split("\\s+"); //Gets rid of all spaces in the middle
-        System.out.println(Arrays.toString(strInputArray));
         int[] intArray = new int[2];
-        if (strInputArray.length == 2) {
+        if (strInputArray.length == 2) { //First, gonna make sure this is even the right amount of entries
             for (int i = 0; i < strInputArray.length; i++) {
-                try {
+                try { //Try and catch allows us to execute code that could potentially error without completely stopping the program
+                    //Here, we're checking to see if the element in the strInputArray at i is an integer by trying to parse it as one
                     intArray[i] = Integer.parseInt(strInputArray[i]);
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException e) { //Normally, if that didn't work, Java would throw a NumberFormatException error and then
+                    //stop the program. What this catch block does instead is make it so that the user just has to retry their input instead.
                     System.out.println("Please only input numbers.");
                     System.out.println(e);
                     getInput();
-                    break;
+                    return null; //This return makes it so that this particular iteration of getInput() doesn't continue to the lines of code
+                    //that are below the if statement, which messes up the final intArray that is returned at the end
                 }
             }
             for (int i = 0; i < intArray.length; i++) {
-                if (String.valueOf(intArray[i]).length() > 1) {
-                    System.out.println("Please only input single digit numbers.");
+                if (String.valueOf(intArray[i]).length() > 2) {
+                    System.out.println("Please only input single or double digit numbers.");
                     getInput();
-                    break;
+                    return null;
                 }
             }
 
@@ -229,9 +233,8 @@ public class LyricPuzzle {
         else {
             System.out.println("Please format your input properly. For example: \"1 2\"");
             getInput();
+            return null;
         }
-        System.out.println(Arrays.toString(intArray));
-        System.out.println("ur mom");
         return intArray;
     }
 
