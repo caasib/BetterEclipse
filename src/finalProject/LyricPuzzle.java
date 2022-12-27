@@ -202,8 +202,8 @@ public class LyricPuzzle {
     public int[] getInput() {
         System.out.println("Select a segment using the row number and column number. For example: \"1 2\"");
         String fullInput = scan.nextLine();
-        fullInput = fullInput.trim();
-        String[] strInputArray = fullInput.split("\\s+");
+        fullInput = fullInput.trim(); //Removes leading and trailing spaces
+        String[] strInputArray = fullInput.split("\\s+"); //Gets rid of all spaces in the middle
         System.out.println(Arrays.toString(strInputArray));
         int[] intArray = new int[2];
         if (strInputArray.length == 2) {
