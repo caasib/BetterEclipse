@@ -215,7 +215,6 @@ public class LyricPuzzle {
                 } catch (NumberFormatException e) { //Normally, if that didn't work, Java would throw a NumberFormatException error and then
                     //stop the program. What this catch block does instead is make it so that the user just has to retry their input instead.
                     System.out.println("Please only input numbers.");
-                    System.out.println(e);
                     getInput();
                     return null; //This return makes it so that this particular iteration of getInput() doesn't continue to the lines of code
                     //that are below the if statement, which messes up the final intArray that is returned at the end
@@ -236,6 +235,23 @@ public class LyricPuzzle {
             return null;
         }
         return intArray;
+    }
+
+    public String printColor(String segmentColor) { //This is why the color field exists - for pretty printing!
+        String color = "";
+        if (segmentColor.equals("Red")) {
+            color = "\u001b[31m";
+        }
+        else if (segmentColor.equals("Blue")) {
+            color = "\u001b[34m";
+        }
+        else if (segmentColor.equals("Yellow")) {
+            color = "\u001b[33m";
+        }
+        else if (segmentColor.equals("Green")) {
+            color = "\u001b[32m";
+        }
+        return color;
     }
 
     public void test() {
