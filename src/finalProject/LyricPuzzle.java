@@ -23,6 +23,10 @@ public class LyricPuzzle {
     private Random rand = new Random();
     private Scanner scan = new Scanner(System.in);
     private int counter = 0;
+    private int columns = 0;
+    private int movesLeft = 20;
+    private int matchesFound = 0;
+    private int matchesToFind = 3;
 
     public ArrayList<String> splitLyric() {
         String fullLyric = allLyrics[counter];
@@ -115,30 +119,55 @@ public class LyricPuzzle {
             }
         }
         int middleDivisor = divisors.get((divisors.size() - 1)/2); //Finds the middle value in the divisors arrayList
+        if (middleDivisor == 1) {
+            middleDivisor = 2;
+        }
         return middleDivisor;
     }
 
     public void displayBoard() { //Big thanks to Kenzie for helping me do basic math
         //Because it's a 1D array, I'm just going to iterate over the array the normal way and then check to see if we're at the end
         //of the column so that it can split up the rows
-        int columns = findMiddleDivisor();
+        int rows = (int)Math.ceil(segments.size() / (double)columns);
+        for (int i = 0; i < columns; i++) {
+            if (i == 0) {
+                System.out.printf("\t\t%-15d", i);
+            }
+            else {
+                System.out.printf("%-20d", i);
+            }
+        }
+        System.out.println();
         for (int i = 0; i < segments.size(); i++) {
+            if (i == 0) {
+                System.out.print(i + "  ");
+            }
             if ((i % columns == 0 ) && (i != 0)) {
                 System.out.println();
+                System.out.print("\u001b[0m" + i / columns + "  ");
             }
-            System.out.printf("%-15s   ", segments.get(i).getLyric()); //Strings take up 15 spaces and I add a few spaces for niceness
+            System.out.printf("%-20s   ", printColor(segments.get(i).getColor()) + segments.get(i).getLyric()); //Strings take up 15 spaces and I add a few spaces for niceness
             //I could have used \t, but I didn't like how large the gap was. It's better to have things closer together since this will
             //be a matching game
         }
+        System.out.println("\u001b[0m" + ""); //Resets the color for later print statements
     }
 
-    //I hate repeating code too much, so now these will be 2 separate methods for either direction
-    //They still repeat code, but I think it looks better this way
     public boolean checkLeftMatch(PuzzleSegment selectedSegment) {
         boolean match = false;
         int segmentIndex = segments.indexOf(selectedSegment);
+        PuzzleSegment segmentToCheck = segments.get(segmentIndex - 1);
+        String fullLyric = selectedSegment.getFullLyric();
+        String wordsBefore = fullLyric.substring(0, fullLyric.indexOf(selectedSegment.getLyric())); //Gets the substring of words that come before the segment
+        String wordBefore = wordsBefore.substring(wordsBefore.lastIndexOf(" ") + 1); //Finds the last word of that substring by finding the last space in the
+        //substring and going one more for the letter
         if (selectedSegment.getFullLyric().equals(segments.get(segmentIndex - 1).getFullLyric())) {
-            match = true;
+            if (segmentToCheck.getLyric().contains(wordBefore)) {
+                match = true;
+                segments.remove(selectedSegment);
+                segments.remove(segmentIndex - 1);
+                columns = findMiddleDivisor();
+            }
         }
         return match;
     }
@@ -146,17 +175,26 @@ public class LyricPuzzle {
     public boolean checkRightMatch(PuzzleSegment selectedSegment) {
         boolean match = false;
         int segmentIndex = segments.indexOf(selectedSegment);
-        if (selectedSegment.getFullLyric().equals(segments.get(segmentIndex + 1).getFullLyric())) {
-            match = true;
+        if (segmentIndex + 1 == segments.size()) {
+            return match;
+        }
+        PuzzleSegment segmentToCheck = segments.get(segmentIndex + 1);
+        String fullLyric = selectedSegment.getFullLyric();
+        int nextWordIndex = fullLyric.indexOf(selectedSegment.getLyric()) + (selectedSegment.getLyric().length() + 1); //Gets the index of the lyric in the segment, then adds
+        //the length of that lyric to get to the end of the segment, then adds another one to get to the next word
+        if (fullLyric.equals(segmentToCheck.getFullLyric())) {
+            if (fullLyric.indexOf(segmentToCheck.getLyric()) == nextWordIndex){
+                match = true;
+                segments.remove(selectedSegment);
+                segments.remove(segmentIndex + 1);
+                columns = findMiddleDivisor();
+            }
         }
         return match;
     }
 
-    //And now, the main checkForMatch method which combines the two previous methods and makes this method look a lot nicer with a lot less
-    //repeated code
-    public boolean checkForMatch(PuzzleSegment selectedSegment) { //Check the left and right of the piece to see if there was a match
+    public boolean checkForMatch(PuzzleSegment selectedSegment) { //Combines the previous two methods
         boolean match = false;
-        int columns = findMiddleDivisor();
         int segmentIndex = segments.indexOf(selectedSegment);
         if (segmentIndex % columns == 0) {
             if (checkRightMatch(selectedSegment)) {
@@ -176,8 +214,58 @@ public class LyricPuzzle {
         return match;
     }
 
-    public int segmentPositionInArray(int row, int column) {
-        int columns = findMiddleDivisor(); //Need to find a way to give this a wider scope so that I don't have to constantly run this method
+    public boolean isValidMove(int originalSegment, int segmentToSwap) {
+        boolean valid = false;
+        if ((originalSegment - 1 == segmentToSwap) || (originalSegment + 1 == segmentToSwap) || (originalSegment + columns == segmentToSwap) || (originalSegment - columns == segmentToSwap)) {
+            valid = true;
+        }
+        return valid;
+    }
+
+    public int getValidInput() {
+        //Because I'm pulling 2 numbers at once, we'll return an integer array of size 2: [row, column]
+        System.out.println("Select a segment using the row number and column number. For example: \"1 2\"");
+        String fullInput = scan.nextLine(); //Normally you would use scan.nextInt() twice, but what if the user doesn't give us an integer?
+        fullInput = fullInput.trim(); //Removes leading and trailing spaces
+        String[] strInputArray = fullInput.split("\\s+"); //Gets rid of all spaces in the middle
+        int[] intArray = new int[2];
+        if (strInputArray.length != 2) {
+            System.out.println("Please format your input properly. For example: \"1 2\"");
+            return -1; //This is used as an abnormal value so that later on we can see if the input was good or not
+            //I was originally going to make this function run itself again if the input was wrong, but that messed with the
+            //return at the end.
+        }
+        for (int i = 0; i < strInputArray.length; i++) {
+            try { //Try and catch allows us to execute code that could potentially error without completely stopping the program
+                //Here, we're checking to see if the element in the strInputArray at i is an integer by trying to parse it as one
+                intArray[i] = Integer.parseInt(strInputArray[i]);
+            } catch (NumberFormatException e) { //Normally, if that didn't work, Java would throw a NumberFormatException error and then
+                //stop the program. What this catch block does instead is make it so that the user just has to retry their input instead.
+                System.out.println("Please only input numbers.");
+                return -1;
+            }
+        }
+        for (int i = 0; i < intArray.length; i++) {
+            if (String.valueOf(intArray[i]).length() > 2) {
+                System.out.println("Please only input single or double digit numbers.");
+                return -1;
+            }
+        }
+        int rows = (int)Math.ceil(segments.size() / (double)columns);
+        if (intArray[0] > rows - 1 || intArray[0] < 0) {
+            System.out.println("Invalid row number.");
+            return -1;
+        }
+        if (intArray[1] > columns - 1 || intArray[1] < 0) {
+            System.out.println("Invalid column number.");
+            return -1;
+        }
+        int indexOfSegment = (intArray[0] * columns) + intArray[1];
+        if (indexOfSegment == segments.size()) {
+            System.out.println("There isn't anything there!");
+            return -1;
+        }
+        return indexOfSegment; //Gives the index position of the segment in the array
         /* Because this is a 1D array, I have to be a little creative with the math in order to get this to work.
         To visualize:
         (0,0) (0,1) (0,2)
@@ -187,54 +275,6 @@ public class LyricPuzzle {
         There are 3 columns, so when we plug everything in, we get (1 * 3) + 2 = 5.
         Now, even without using a 2D array like in the vending machine project, I can still get the correct index for the item I want.
          */
-        return (row * columns) + column;
-    }
-
-    public boolean isValidMove(int originalSegment, int segmentToSwap) {
-        boolean valid = false;
-        int columns = findMiddleDivisor();
-        if ((originalSegment - 1 == segmentToSwap) || (originalSegment + 1 == segmentToSwap) || (originalSegment + columns == segmentToSwap) || (originalSegment - columns == segmentToSwap)) {
-            valid = true;
-        }
-        return valid;
-    }
-
-    public int[] getInput() { //This gets the input and makes sure that it is in the correct format
-        //This doesn't check for whether the row or column number picked is one of the actual row or column numbers - that will be done later
-        //Because I'm pulling 2 numbers at once, we'll return an integer array of size 2: [row, column]
-        System.out.println("Select a segment using the row number and column number. For example: \"1 2\"");
-        String fullInput = scan.nextLine(); //Normally you would use scan.nextInt() twice, but what if the user doesn't give us an integer?
-        fullInput = fullInput.trim(); //Removes leading and trailing spaces
-        String[] strInputArray = fullInput.split("\\s+"); //Gets rid of all spaces in the middle
-        int[] intArray = new int[2];
-        if (strInputArray.length == 2) { //First, gonna make sure this is even the right amount of entries
-            for (int i = 0; i < strInputArray.length; i++) {
-                try { //Try and catch allows us to execute code that could potentially error without completely stopping the program
-                    //Here, we're checking to see if the element in the strInputArray at i is an integer by trying to parse it as one
-                    intArray[i] = Integer.parseInt(strInputArray[i]);
-                } catch (NumberFormatException e) { //Normally, if that didn't work, Java would throw a NumberFormatException error and then
-                    //stop the program. What this catch block does instead is make it so that the user just has to retry their input instead.
-                    System.out.println("Please only input numbers.");
-                    getInput();
-                    return null; //This return makes it so that this particular iteration of getInput() doesn't continue to the lines of code
-                    //that are below the if statement, which messes up the final intArray that is returned at the end
-                }
-            }
-            for (int i = 0; i < intArray.length; i++) {
-                if (String.valueOf(intArray[i]).length() > 2) {
-                    System.out.println("Please only input single or double digit numbers.");
-                    getInput();
-                    return null;
-                }
-            }
-
-        }
-        else {
-            System.out.println("Please format your input properly. For example: \"1 2\"");
-            getInput();
-            return null;
-        }
-        return intArray;
     }
 
     public String printColor(String segmentColor) { //This is why the color field exists - for pretty printing!
@@ -254,16 +294,60 @@ public class LyricPuzzle {
         return color;
     }
 
+    public void setup() {
+        Collections.shuffle(Arrays.asList(allLyrics)); //This prevents repetition without me having to do a bunch of checks
+        //There are ways to shuffle without just converting an array to a list and shuffling, but that requires a lot more work
+        makeSegments(splitLyric());
+        makeSegments(splitLyric());
+        makeSegments(splitLyric());
+        makeSegments(splitLyric());
+        columns = findMiddleDivisor();
+        matchSegmentColors(groupSameSegments());
+        Collections.shuffle(segments); //Shuffling segments so that all the lyrics don't print out in the right order and ruin the game
+    }
+
+    public void play() {
+        displayBoard();
+        System.out.println(movesLeft + " move(s) left.");
+        System.out.println(matchesFound + " match(es) found. You need to find " + matchesToFind + " matches to win.");
+        int firstSegmentIndex = getValidInput();
+        while (firstSegmentIndex == -1) {
+            firstSegmentIndex = getValidInput();
+        }
+        PuzzleSegment firstSegment = segments.get(firstSegmentIndex);
+        System.out.println("Select the segment you want to switch that segment with: ");
+        int secondSegmentIndex = getValidInput();
+        while (secondSegmentIndex == -1) {
+            secondSegmentIndex = getValidInput();
+        }
+        PuzzleSegment secondSegment = segments.get(secondSegmentIndex);
+        if (!isValidMove(firstSegmentIndex, secondSegmentIndex)) {
+            System.out.println("Invalid move.");
+            play();
+        }
+        --movesLeft;
+        segments.set(secondSegmentIndex, firstSegment);
+        segments.set(firstSegmentIndex, secondSegment);
+        if (checkForMatch(firstSegment) || checkForMatch(secondSegment)) {
+            ++matchesFound;
+            System.out.println("Match found!");
+            if (matchesFound == matchesToFind) {
+                System.out.println("You won!");
+                return;
+            }
+        }
+        else {
+            System.out.println("No matches found");
+        }
+        if (movesLeft == 0) {
+            System.out.println("Game over!");
+            return;
+        }
+        play();
+    }
+
     public void test() {
-//        Collections.shuffle(Arrays.asList(allLyrics)); //This prevents repetition without me having to do a bunch of checks
-//        //There are ways to shuffle without just converting an array to a list and shuffling, but that requires a lot more work
-//        makeSegments(splitLyric());
-//        makeSegments(splitLyric());
-//        makeSegments(splitLyric());
-//        makeSegments(splitLyric());
-//        matchSegmentColors(groupSameSegments());
-//        Collections.shuffle(segments); //Shuffling segments so that all the lyrics don't print out in the right order and ruin the game
-//        displayBoard();
-        getInput();
+        setup();
+        play();
     }
 }
