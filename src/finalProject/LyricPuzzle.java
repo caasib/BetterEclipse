@@ -24,9 +24,11 @@ public class LyricPuzzle {
     private Scanner scan = new Scanner(System.in);
     private int counter = 0;
     private int columns = 0;
-    private int movesLeft = 20;
     private int matchesFound = 0;
-    private int matchesToFind = 3;
+    private int lyricsFound = 0;
+    private int movesLeft;
+    private int matchesToFind;
+    private int lyricsToFind;
 
     public ArrayList<String> splitLyric() {
         String fullLyric = allLyrics[counter];
@@ -94,18 +96,6 @@ public class LyricPuzzle {
         }
     }
 
-    /*
-    Gameplay:
-    Board is a grid of lyrics (coordinate system like battleship)
-    Limited amount of moves in a game
-    To win, match x amount of lyric segments OR put together x amount of full lyrics
-    Select a piece - can move it left, right, up, or down
-    When piece is moved, check pieces to the left and right of it to see if they are part of the same lyric
-    If they are, then check to see if they are in the right order
-    If they're in the right order, delete from board and increment matches
-    Even if a piece doesn't match, keep it in the same position and count the move
-    If there is a singular lyric of one color, count it as a match and delete it from the board
-     */
     public int findMiddleDivisor() {
         /* Using the middle divisor, I can make the display look more even
         For example, if segments.size() = 20, then instead of having something like 2 rows and 10 columns, I can instead find the middle
@@ -158,14 +148,14 @@ public class LyricPuzzle {
         int segmentIndex = segments.indexOf(selectedSegment);
         PuzzleSegment segmentToCheck = segments.get(segmentIndex - 1);
         String fullLyric = selectedSegment.getFullLyric();
-        String wordsBefore = fullLyric.substring(0, fullLyric.indexOf(selectedSegment.getLyric())); //Gets the substring of words that come before the segment
+        String wordsBefore = fullLyric.substring(0, fullLyric.indexOf(selectedSegment.getLyric())).trim(); //Gets the substring of words that come before the segment
         String wordBefore = wordsBefore.substring(wordsBefore.lastIndexOf(" ") + 1); //Finds the last word of that substring by finding the last space in the
         //substring and going one more for the letter
         if (selectedSegment.getFullLyric().equals(segments.get(segmentIndex - 1).getFullLyric())) {
             if (segmentToCheck.getLyric().contains(wordBefore)) {
                 match = true;
                 segments.remove(selectedSegment);
-                segments.remove(segmentIndex - 1);
+                segments.remove(segmentToCheck);
                 columns = findMiddleDivisor();
             }
         }
@@ -186,7 +176,7 @@ public class LyricPuzzle {
             if (fullLyric.indexOf(segmentToCheck.getLyric()) == nextWordIndex){
                 match = true;
                 segments.remove(selectedSegment);
-                segments.remove(segmentIndex + 1);
+                segments.remove(segmentToCheck);
                 columns = findMiddleDivisor();
             }
         }
@@ -306,10 +296,26 @@ public class LyricPuzzle {
         Collections.shuffle(segments); //Shuffling segments so that all the lyrics don't print out in the right order and ruin the game
     }
 
+    /*
+    Gameplay:
+    Board is a grid of lyrics (coordinate system like battleship)
+    Limited amount of moves in a game
+    To win, match x amount of lyric segments OR put together x amount of full lyrics
+    Select a piece - can move it left, right, up, or down
+    When piece is moved, check pieces to the left and right of it to see if they are part of the same lyric
+    If they are, then check to see if they are in the right order
+    If they're in the right order, delete from board and increment matches
+    Even if a piece doesn't match, keep it in the same position and count the move
+    If there is a singular lyric left, end the game
+     */
+
     public void play() {
         displayBoard();
         System.out.println(movesLeft + " move(s) left.");
         System.out.println(matchesFound + " match(es) found. You need to find " + matchesToFind + " matches to win.");
+        if (lyricsToFind > 0) {
+            System.out.println(lyricsFound + " lyric(s) found. You need to find " + lyricsToFind + " lyric(s) to win.");
+        }
         int firstSegmentIndex = getValidInput();
         while (firstSegmentIndex == -1) {
             firstSegmentIndex = getValidInput();
@@ -337,17 +343,50 @@ public class LyricPuzzle {
             }
         }
         else {
-            System.out.println("No matches found");
+            System.out.println("No matches found.");
         }
         if (movesLeft == 0) {
             System.out.println("Game over!");
             return;
         }
+        if (segments.size() < 2) {
+            System.out.println("Not enough segments to continue playing! Game over!");
+            return;
+        }
         play();
+    }
+
+    public void menu() {
+        System.out.println("Pick a game mode:\n1 - Easy\n2 - Medium\n3 - Hard");
+        int userPick = scan.nextInt(); //I should probably do another try-catch here, but I decided to actually
+        //read the rubric and found out I don't have to do all of that. I'm too lazy to remove it from the getValidInput()
+        //method, though
+        switch (userPick) {
+            case 1:
+                matchesToFind = rand.nextInt(4) + 2;
+                movesLeft = 25;
+                play();
+                break;
+            case 2:
+                lyricsToFind = 1;
+                matchesToFind = 10;
+                movesLeft = 20;
+                play();
+                break;
+            case 3:
+                lyricsToFind = rand.nextInt(1) + 2;
+                matchesToFind = 10;
+                movesLeft = 20;
+                play();
+                break;
+            default:
+                System.out.println("Invalid input.");
+                menu();
+        }
     }
 
     public void test() {
         setup();
-        play();
+        menu();
     }
 }
