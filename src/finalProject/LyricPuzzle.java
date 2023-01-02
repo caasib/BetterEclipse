@@ -337,7 +337,7 @@ public class LyricPuzzle {
         if (checkForMatch(firstSegment) || checkForMatch(secondSegment)) {
             ++matchesFound;
             System.out.println("Match found!");
-            if (matchesFound == matchesToFind) {
+            if (matchesFound == matchesToFind && lyricsFound == lyricsToFind) {
                 System.out.println("You won!");
                 return;
             }
@@ -357,11 +357,14 @@ public class LyricPuzzle {
     }
 
     public void menu() {
-        System.out.println("Pick a game mode:\n1 - Easy\n2 - Medium\n3 - Hard");
+        System.out.println("Pick a difficulty:\n1 - Easy\n2 - Medium\n3 - Hard");
         int userPick = scan.nextInt(); //I should probably do another try-catch here, but I decided to actually
         //read the rubric and found out I don't have to do all of that. I'm too lazy to remove it from the getValidInput()
         //method, though
-        switch (userPick) {
+        scan.nextLine(); //Because getValidInput() uses scan.nextLine and this method uses scan.nextInt, I have to use
+        //another scan.nextLine here to get rid of the newline that scan.nextInt leaves after pulling the integer
+        switch (userPick) { //Basically an if-else statement, but runs a tiny bit faster because it doesn't have to go
+            //through every single branch when it runs. Instead, it just immediately jumps to the proper case
             case 1:
                 matchesToFind = rand.nextInt(4) + 2;
                 movesLeft = 25;
@@ -379,7 +382,7 @@ public class LyricPuzzle {
                 movesLeft = 20;
                 play();
                 break;
-            default:
+            default: //If the user input isn't 1, 2, or 3, go here
                 System.out.println("Invalid input.");
                 menu();
         }
