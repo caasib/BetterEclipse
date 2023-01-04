@@ -83,15 +83,10 @@ public class LyricPuzzle {
         //I think this can be considered lasanga code (code that is so intertwined that you can't make changes in one layer without changing
         //the rest)
         for (int k = 0; k < colorLists.size(); k++) {
-            String randColor = colors.get(rand.nextInt(colors.size()));
+            String color = colors.get(k);
             for (int l = 0; l < colorLists.get(k).size(); l++) {
-                colorLists.get(k).get(l).setColor(randColor);
+                colorLists.get(k).get(l).setColor(color);
                 //This is kinda ugly, but it just gets the PuzzleSegment inside the ArrayList inside colorLists and changes its color
-            }
-            colors.remove(randColor);
-            if (colors.isEmpty()) {
-                //removeNullSegments();
-                break;
             }
         }
     }
@@ -118,7 +113,6 @@ public class LyricPuzzle {
     public void displayBoard() { //Big thanks to Kenzie for helping me do basic math
         //Because it's a 1D array, I'm just going to iterate over the array the normal way and then check to see if we're at the end
         //of the column so that it can split up the rows
-        int rows = (int)Math.ceil(segments.size() / (double)columns);
         for (int i = 0; i < columns; i++) {
             if (i == 0) {
                 System.out.printf("\t\t%-15d", i);
@@ -159,7 +153,6 @@ public class LyricPuzzle {
                 match = true;
                 segments.remove(selectedSegment);
                 segments.remove(segmentToCheck);
-                columns = findMiddleDivisor();
             }
         }
         return match;
@@ -183,7 +176,6 @@ public class LyricPuzzle {
                 System.out.println(fullLyric.charAt(nextWordIndex));
                 segments.remove(selectedSegment);
                 segments.remove(segmentToCheck);
-                columns = findMiddleDivisor();
             }
         }
         return match;
@@ -219,7 +211,7 @@ public class LyricPuzzle {
     }
 
     public int getValidInput() {
-        //Because I'm pulling 2 numbers at once, we'll return an integer array of size 2: [row, column]
+        //This will return the index of the segment that is picked
         System.out.println("Select a segment using the row number and column number. For example: \"1 2\"");
         String fullInput = scan.nextLine(); //Normally you would use scan.nextInt() twice, but what if the user doesn't give us an integer?
         fullInput = fullInput.trim(); //Removes leading and trailing spaces
@@ -273,19 +265,47 @@ public class LyricPuzzle {
          */
     }
 
-    public String printColor(String segmentColor) { //This is why the color field exists - for pretty printing!
+    public boolean hasOtherMatches(PuzzleSegment segment) {
+        boolean matches = false;
+        for (int i = 0; i < segments.size(); i++) {
+            if (segments.get(i).getColor().equals(segment.getColor()) && segments.get(i) != segment) {
+                matches = true;
+                break;
+            }
+        }
+        return matches;
+    }
+
+    public void clearLonelyLyrics() {
+        for (int i = 0; i < segments.size(); i++) {
+            if (!hasOtherMatches(segments.get(i))) {
+                segments.remove(i);
+            }
+        }
+    }
+
+    public boolean checkClearedLyric() {
+        boolean cleared = false;
+
+        return cleared;
+    }
+
+    public String printColor(String segmentColor) { //This gives us pretty printing for the lyrics
         String color = "";
-        if (segmentColor.equals("Red")) {
-            color = "\u001b[31m";
-        }
-        else if (segmentColor.equals("Blue")) {
-            color = "\u001b[34m";
-        }
-        else if (segmentColor.equals("Yellow")) {
-            color = "\u001b[33m";
-        }
-        else if (segmentColor.equals("Green")) {
-            color = "\u001b[32m";
+        switch (segmentColor) { //Basically an if-else statement, but runs a tiny bit faster because it doesn't have to go
+            //through every single branch when it runs. Instead, it just immediately jumps to the proper case
+            case "Red":
+                color = "\u001b[31m";
+                break;
+            case "Blue":
+                color = "\u001b[34m";
+                break;
+            case "Yellow":
+                color = "\u001b[33m";
+                break;
+            case "Green":
+                color = "\u001b[32m";
+                break;
         }
         return color;
     }
@@ -343,9 +363,10 @@ public class LyricPuzzle {
         if (checkForMatch(firstSegment) || checkForMatch(secondSegment)) {
             ++matchesFound;
             System.out.println("Match found!");
+            clearLonelyLyrics();
             if (matchesFound == matchesToFind && lyricsFound == lyricsToFind) {
                 System.out.println("You won!");
-                System.exit(0); //Makes the program end
+                System.exit(0); //Makes the program end (return didn't work)
             }
         }
         else {
@@ -353,11 +374,11 @@ public class LyricPuzzle {
         }
         if (movesLeft == 0) {
             System.out.println("Game over!");
-            return;
+            System.exit(0);
         }
         if (segments.size() < 2) {
             System.out.println("Not enough segments to continue playing! Game over!");
-            return;
+            System.exit(0);
         }
         play();
     }
@@ -369,8 +390,7 @@ public class LyricPuzzle {
         //method, though
         scan.nextLine(); //Because getValidInput() uses scan.nextLine and this method uses scan.nextInt, I have to use
         //another scan.nextLine here to get rid of the newline that scan.nextInt leaves after pulling the integer
-        switch (userPick) { //Basically an if-else statement, but runs a tiny bit faster because it doesn't have to go
-            //through every single branch when it runs. Instead, it just immediately jumps to the proper case
+        switch (userPick) {
             case 1:
                 matchesToFind = rand.nextInt(4) + 2;
                 movesLeft = 25;
