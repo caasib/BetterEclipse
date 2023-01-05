@@ -388,8 +388,20 @@ public class LyricPuzzle {
         play();
     }
 
+    public void tutorial() {
+        System.out.println("This is a lyric matching game.");
+        System.out.println("Depending on the difficulty you pick, you will either have to make a certain number of matches or make a full lyric in order to win.");
+        System.out.println("You can move lyric segments up, down, left, or right - you cannot go diagonal, and you cannot move more than one space in a single turn.");
+        System.out.println("If you make an invalid move, the segments will not move and the move will not count against you.");
+        System.out.println("If the move is valid, even if it does not make a match, the segments will switch and the move will count.");
+        System.out.println("To successfully match two segments, it has to be either on the left or right of a segment which has the same lyric and it has to be in the right order.");
+        System.out.println("To make things easier for the player, segments which come from the same lyric are the same color.");
+        System.out.println("Have fun!");
+        menu();
+    }
+
     public void menu() {
-        System.out.println("Pick a difficulty:\n1 - Easy\n2 - Medium\n3 - Hard");
+        System.out.println("Pick a difficulty:\n1 - Easy\n2 - Medium\n3 - Hard\nYou can also input 4 for a quick explanation of how to play.");
         int userPick = scan.nextInt(); //I should probably do another try-catch here, but I decided to actually
         //read the rubric and found out I don't have to do all of that. I'm too lazy to remove it from the getValidInput()
         //method, though
@@ -403,15 +415,18 @@ public class LyricPuzzle {
                 break;
             case 2:
                 lyricsToFind = 1;
-                matchesToFind = 10;
-                movesLeft = 20;
+                matchesToFind = rand.nextInt(4) + 5;
+                movesLeft = 25;
                 play();
                 break;
             case 3:
                 lyricsToFind = rand.nextInt(1) + 2;
                 matchesToFind = 10;
-                movesLeft = 25;
+                movesLeft = 30;
                 play();
+                break;
+            case 4:
+                tutorial();
                 break;
             default: //If the user input isn't 1, 2, or 3, go here
                 System.out.println("Invalid input.");
