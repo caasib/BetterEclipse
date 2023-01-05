@@ -42,7 +42,7 @@ public class LyricPuzzle {
         non-whitespace character. The \S+ means that it looks for one or more non-whitespace characters; as many as it can find.
         The ? means that it matches for the group of a whitespace character and then as many non-whitespace characters as possible
         0-1 times.
-        The double \ in the actual code is because you have to escape special characters. Nothing big there.
+        The double \ in the actual code is because \ is a special character, and you have to use another \ to escape it.
         */
         Matcher matcher = pattern.matcher(fullLyric);
         while (matcher.find()) {
@@ -83,7 +83,6 @@ public class LyricPuzzle {
             String color = colors[k];
             for (int l = 0; l < colorLists.get(k).size(); l++) {
                 colorLists.get(k).get(l).setColor(color);
-                //This is kinda ugly, but it just gets the PuzzleSegment inside the ArrayList inside colorLists and changes its color
             }
         }
     }
@@ -110,7 +109,8 @@ public class LyricPuzzle {
     public void displayBoard() { //Big thanks to Kenzie for helping me do basic math
         //Because it's a 1D array, I'm just going to iterate over the array the normal way and then check to see if we're at the end
         //of the column so that it can split up the rows
-        for (int i = 0; i < columns; i++) {
+        for (int i = 0; i < columns; i++) { //The top part where the columns are numbered is not exact, but this is the best
+            //I could get it to look
             if (i == 0) {
                 System.out.printf("\t\t%-15d", i);
             }
@@ -200,10 +200,8 @@ public class LyricPuzzle {
     }
 
     public boolean isValidMove(int originalSegment, int segmentToSwap) {
-        boolean valid = false;
-        if ((originalSegment - 1 == segmentToSwap) || (originalSegment + 1 == segmentToSwap) || (originalSegment + columns == segmentToSwap) || (originalSegment - columns == segmentToSwap)) {
-            valid = true;
-        }
+        boolean valid = (originalSegment - 1 == segmentToSwap) || (originalSegment + 1 == segmentToSwap) || (originalSegment + columns == segmentToSwap) || (originalSegment - columns == segmentToSwap);
+        //This is a "syntactic sugar" way of setting a boolean value. It works the exact same as if I had made a large if statement with those conditions.
         return valid;
     }
 
@@ -428,7 +426,7 @@ public class LyricPuzzle {
             case 4:
                 tutorial();
                 break;
-            default: //If the user input isn't 1, 2, or 3, go here
+            default: //If the user input isn't 1, 2, 3, or 4, go here
                 System.out.println("Invalid input.");
                 menu();
         }
