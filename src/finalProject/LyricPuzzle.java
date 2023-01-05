@@ -285,7 +285,11 @@ public class LyricPuzzle {
         boolean cleared = false;
         for (int i = 0; i < colors.length; i++) {
             for (int j = 0; j < segments.size(); j++) {
-
+                cleared = true;
+                if (segments.get(j).getColor().equals(colors[i])) {
+                    cleared = false;
+                    break;
+                }
             }
         }
         return cleared;
@@ -365,7 +369,10 @@ public class LyricPuzzle {
             ++matchesFound;
             System.out.println("Match found!");
             clearLonelyLyrics();
-            if (matchesFound == matchesToFind && lyricsFound == lyricsToFind) {
+            if (checkClearedLyric()) {
+                ++lyricsFound;
+            }
+            if (matchesFound >= matchesToFind && lyricsFound >= lyricsToFind) {
                 System.out.println("You won!");
                 System.exit(0); //Makes the program end (return didn't work)
             }
@@ -394,7 +401,7 @@ public class LyricPuzzle {
         switch (userPick) {
             case 1:
                 matchesToFind = rand.nextInt(4) + 2;
-                movesLeft = 25;
+                movesLeft = 20;
                 play();
                 break;
             case 2:
@@ -406,7 +413,7 @@ public class LyricPuzzle {
             case 3:
                 lyricsToFind = rand.nextInt(1) + 2;
                 matchesToFind = 10;
-                movesLeft = 20;
+                movesLeft = 25;
                 play();
                 break;
             default: //If the user input isn't 1, 2, or 3, go here
