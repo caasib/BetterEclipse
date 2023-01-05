@@ -281,15 +281,12 @@ public class LyricPuzzle {
         }
     }
 
-    public boolean checkClearedLyric() {
-        boolean cleared = false;
-        for (int i = 0; i < colors.length; i++) {
-            for (int j = 0; j < segments.size(); j++) {
-                cleared = true;
-                if (segments.get(j).getColor().equals(colors[i])) {
-                    cleared = false;
-                    break;
-                }
+    public boolean checkClearedLyric(String color) {
+        boolean cleared = true;
+        for (int i = 0; i < segments.size(); i++) {
+            if (segments.get(i).getColor().equals(color)) {
+                cleared = false;
+                break;
             }
         }
         return cleared;
@@ -369,7 +366,7 @@ public class LyricPuzzle {
             ++matchesFound;
             System.out.println("Match found!");
             clearLonelyLyrics();
-            if (checkClearedLyric()) {
+            if (checkClearedLyric(firstSegment.getColor()) || checkClearedLyric(secondSegment.getColor())) {
                 ++lyricsFound;
             }
             if (matchesFound >= matchesToFind && lyricsFound >= lyricsToFind) {
