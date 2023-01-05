@@ -16,10 +16,7 @@ public class LyricPuzzle {
     //The allLyrics array is protected rather than private and static so that it can be referenced in the PuzzleSegment class in order for the
     //getFullLyric() method to work
     private ArrayList<PuzzleSegment> segments = new ArrayList<PuzzleSegment>();
-    private ArrayList<String> colors = new ArrayList<String>(Arrays.asList("Red", "Yellow", "Green", "Blue"));
-    //Arrays.asList converts an array to a list. I just used it here so that I could initialize an ArrayList with values instead of having to
-    //add them later line by line
-    //I could have done the same thing with allLyrics, but I thought it looked ugly that way ¯\_(ツ)_/¯
+    private String[] colors = {"Red", "Yellow", "Green", "Blue"};
     private Random rand = new Random();
     private Scanner scan = new Scanner(System.in);
     private int counter = 0;
@@ -39,7 +36,7 @@ public class LyricPuzzle {
         //that I could find were broken because they relied on an old bug with the lookbehind regex. Instead, Pattern and Matcher regex is much
         //easier to use and understand and gives me the result I'm looking for.
         /*
-        A quick explanation:
+        A quick explanation of the regex:
         The regex "\S+(\s\S+)? finds and groups together every 2 words. \S matches non-whitespace characters and \s matches whitespace.
         Basically, it looks for a non-whitespace character, and then it looks for the group of a whitespace character and another
         non-whitespace character. The \S+ means that it looks for one or more non-whitespace characters; as many as it can find.
@@ -83,7 +80,7 @@ public class LyricPuzzle {
         //I think this can be considered lasanga code (code that is so intertwined that you can't make changes in one layer without changing
         //the rest)
         for (int k = 0; k < colorLists.size(); k++) {
-            String color = colors.get(k);
+            String color = colors[k];
             for (int l = 0; l < colorLists.get(k).size(); l++) {
                 colorLists.get(k).get(l).setColor(color);
                 //This is kinda ugly, but it just gets the PuzzleSegment inside the ArrayList inside colorLists and changes its color
@@ -286,7 +283,11 @@ public class LyricPuzzle {
 
     public boolean checkClearedLyric() {
         boolean cleared = false;
+        for (int i = 0; i < colors.length; i++) {
+            for (int j = 0; j < segments.size(); j++) {
 
+            }
+        }
         return cleared;
     }
 
