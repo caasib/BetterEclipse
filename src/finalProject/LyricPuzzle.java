@@ -168,9 +168,6 @@ public class LyricPuzzle {
         if (fullLyric.equals(segmentToCheck.getFullLyric())) {
             if (fullLyric.indexOf(segmentToCheck.getLyric()) == nextWordIndex){
                 match = true;
-                System.out.println(nextWordIndex);
-                System.out.println(fullLyric.indexOf(segmentToCheck.getLyric()));
-                System.out.println(fullLyric.charAt(nextWordIndex));
                 segments.remove(selectedSegment);
                 segments.remove(segmentToCheck);
             }
@@ -202,6 +199,9 @@ public class LyricPuzzle {
     public boolean isValidMove(int originalSegment, int segmentToSwap) {
         boolean valid = (originalSegment - 1 == segmentToSwap) || (originalSegment + 1 == segmentToSwap) || (originalSegment + columns == segmentToSwap) || (originalSegment - columns == segmentToSwap);
         //This is a "syntactic sugar" way of setting a boolean value. It works the exact same as if I had made a large if statement with those conditions.
+        if (originalSegment == segments.size() - 1 && segmentToSwap == 0) {
+            valid = true;
+        }
         return valid;
     }
 
@@ -310,6 +310,21 @@ public class LyricPuzzle {
         return color;
     }
 
+    public void winText() {
+        System.out.println(
+                "                                                                                                                  \n" +
+                "`8.`8888.      ,8'  ,o888888o.     8 8888      88           `8.`888b                 ,8'  8 8888 b.             8 \n" +
+                " `8.`8888.    ,8'. 8888     `88.   8 8888      88            `8.`888b               ,8'   8 8888 888o.          8 \n" +
+                "  `8.`8888.  ,8',8 8888       `8b  8 8888      88             `8.`888b             ,8'    8 8888 Y88888o.       8 \n" +
+                "   `8.`8888.,8' 88 8888        `8b 8 8888      88              `8.`888b     .b    ,8'     8 8888 .`Y888888o.    8 \n" +
+                "    `8.`88888'  88 8888         88 8 8888      88               `8.`888b    88b  ,8'      8 8888 8o. `Y888888o. 8 \n" +
+                "     `8. 8888   88 8888         88 8 8888      88                `8.`888b .`888b,8'       8 8888 8`Y8o. `Y88888o8 \n" +
+                "      `8 8888   88 8888        ,8P 8 8888      88                 `8.`888b8.`8888'        8 8888 8   `Y8o. `Y8888 \n" +
+                "       8 8888   `8 8888       ,8P  ` 8888     ,8P                  `8.`888`8.`88'         8 8888 8      `Y8o. `Y8 \n" +
+                "       8 8888    ` 8888     ,88'     8888   ,d8P                    `8.`8' `8,`'          8 8888 8         `Y8o.` \n" +
+                "       8 8888       `8888888P'        `Y88888P'                      `8.`   `8'           8 8888 8            `Yo \n");
+    }
+
     public void setup() {
         Collections.shuffle(Arrays.asList(allLyrics)); //This prevents repetition without me having to do a bunch of checks
         //There are ways to shuffle without just converting an array to a list and shuffling, but that requires a lot more work
@@ -368,7 +383,7 @@ public class LyricPuzzle {
                 ++lyricsFound;
             }
             if (matchesFound >= matchesToFind && lyricsFound >= lyricsToFind) {
-                System.out.println("You won!");
+                winText();
                 System.exit(0); //Makes the program end (return didn't work)
             }
         }
@@ -394,7 +409,7 @@ public class LyricPuzzle {
         System.out.println("If the move is valid, even if it does not make a match, the segments will switch and the move will count.");
         System.out.println("To successfully match two segments, it has to be either on the left or right of a segment which has the same lyric and it has to be in the right order.");
         System.out.println("To make things easier for the player, segments which come from the same lyric are the same color.");
-        System.out.println("Have fun!");
+        System.out.println("Have fun!\n");
         menu();
     }
 
@@ -432,7 +447,7 @@ public class LyricPuzzle {
         }
     }
 
-    public void test() {
+    public void run() {
         setup();
         menu();
     }
