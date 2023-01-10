@@ -19,13 +19,7 @@ public class LyricPuzzle {
     private String[] colors = {"Red", "Yellow", "Green", "Blue"};
     private Random rand = new Random();
     private Scanner scan = new Scanner(System.in);
-    private int counter = 0;
-    private int columns = 0;
-    private int matchesFound = 0;
-    private int lyricsFound = 0;
-    private int movesLeft;
-    private int matchesToFind;
-    private int lyricsToFind;
+    private int counter, columns, matchesFound, lyricsFound, movesLeft, matchesToFind, lyricsToFind = 0;
 
     public ArrayList<String> splitLyric() {
         String fullLyric = allLyrics[counter];
