@@ -428,7 +428,7 @@ public class LyricPuzzle {
                 break;
             case 3:
                 lyricsToFind = rand.nextInt(1) + 2;
-                matchesToFind = 10;
+                matchesToFind = 8;
                 movesLeft = 30;
                 play();
                 break;
