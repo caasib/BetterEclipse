@@ -11,8 +11,9 @@ import java.util.Collections;
 public class LyricPuzzle {
     protected static String[] allLyrics = {"Baby, keep on dancing like you ain't got a choice", "She got a light-skinned friend look like Michael Jackson",
             "A falling star fell from your heart and landed in my eyes", "But you in LA, and I'm out at Jermaine's", "Now I'm at the White House, looking for your President",
-            "So I creep, yeah, cause he doesn't know what I do", "That's why I need a one dance", "Young rebel, Young Money, nothin' you could tell me",
-            "My man is my man, is your man, heard that's her man"}; //If you have any suggestions, let me know
+            "So I creep, yeah, cause he doesn't know what I do", "That's why I need a one dance", "My man is my man, is your man, heard that's her man",
+            "Around the world, around the world", "Prognosis of a problem child, I'm proud and well devoted", "All the other kids with the pumped up kicks",
+            "How great will be the terror, when the Judge comes to give strict justice", "Rap like I'm gifted and grew up on God, yeah"}; //If you have any suggestions, let me know
     //The allLyrics array is protected rather than private and static so that it can be referenced in the PuzzleSegment class in order for the
     //getFullLyric() method to work
     private ArrayList<PuzzleSegment> segments = new ArrayList<PuzzleSegment>();
@@ -48,6 +49,7 @@ public class LyricPuzzle {
     public void makeSegments(ArrayList<String> splitLyricArray) { //I'm not very creative with parameter names
         for (int i = 0; i < splitLyricArray.size(); i++) {
             segments.add(new PuzzleSegment(splitLyricArray.get(i)));
+            //System.out.println(splitLyricArray.get(i));
         }
     }
 
@@ -94,8 +96,8 @@ public class LyricPuzzle {
             }
         }
         int middleDivisor = divisors.get((divisors.size() - 1)/2); //Finds the middle value in the divisors arrayList
-        if (middleDivisor == 1) {
-            middleDivisor = 2;
+        if (middleDivisor <= 2) {
+            middleDivisor = 3;
         }
         return middleDivisor;
     }
@@ -193,7 +195,7 @@ public class LyricPuzzle {
     public boolean isValidMove(int originalSegment, int segmentToSwap) {
         boolean valid = (originalSegment - 1 == segmentToSwap) || (originalSegment + 1 == segmentToSwap) || (originalSegment + columns == segmentToSwap) || (originalSegment - columns == segmentToSwap);
         //This is a "syntactic sugar" way of setting a boolean value. It works the exact same as if I had made a large if statement with those conditions.
-        if (originalSegment == segments.size() - 1 && segmentToSwap == 0) {
+        if ((originalSegment == segments.size() - 1 && segmentToSwap == 0) || (originalSegment == 0 && segmentToSwap == segments.size() - 1)) {
             valid = true;
         }
         return valid;
@@ -306,17 +308,19 @@ public class LyricPuzzle {
 
     public void winText() {
         System.out.println(
-                "                                                                                                                  \n" +
-                "`8.`8888.      ,8'  ,o888888o.     8 8888      88           `8.`888b                 ,8'  8 8888 b.             8 \n" +
-                " `8.`8888.    ,8'. 8888     `88.   8 8888      88            `8.`888b               ,8'   8 8888 888o.          8 \n" +
-                "  `8.`8888.  ,8',8 8888       `8b  8 8888      88             `8.`888b             ,8'    8 8888 Y88888o.       8 \n" +
-                "   `8.`8888.,8' 88 8888        `8b 8 8888      88              `8.`888b     .b    ,8'     8 8888 .`Y888888o.    8 \n" +
-                "    `8.`88888'  88 8888         88 8 8888      88               `8.`888b    88b  ,8'      8 8888 8o. `Y888888o. 8 \n" +
-                "     `8. 8888   88 8888         88 8 8888      88                `8.`888b .`888b,8'       8 8888 8`Y8o. `Y88888o8 \n" +
-                "      `8 8888   88 8888        ,8P 8 8888      88                 `8.`888b8.`8888'        8 8888 8   `Y8o. `Y8888 \n" +
-                "       8 8888   `8 8888       ,8P  ` 8888     ,8P                  `8.`888`8.`88'         8 8888 8      `Y8o. `Y8 \n" +
-                "       8 8888    ` 8888     ,88'     8888   ,d8P                    `8.`8' `8,`'          8 8888 8         `Y8o.` \n" +
-                "       8 8888       `8888888P'        `Y88888P'                      `8.`   `8'           8 8888 8            `Yo \n");
+                """
+                                                                                                                                         \s
+                        `8.`8888.      ,8'  ,o888888o.     8 8888      88           `8.`888b                 ,8'  8 8888 b.             8\s
+                         `8.`8888.    ,8'. 8888     `88.   8 8888      88            `8.`888b               ,8'   8 8888 888o.          8\s
+                          `8.`8888.  ,8',8 8888       `8b  8 8888      88             `8.`888b             ,8'    8 8888 Y88888o.       8\s
+                           `8.`8888.,8' 88 8888        `8b 8 8888      88              `8.`888b     .b    ,8'     8 8888 .`Y888888o.    8\s
+                            `8.`88888'  88 8888         88 8 8888      88               `8.`888b    88b  ,8'      8 8888 8o. `Y888888o. 8\s
+                             `8. 8888   88 8888         88 8 8888      88                `8.`888b .`888b,8'       8 8888 8`Y8o. `Y88888o8\s
+                              `8 8888   88 8888        ,8P 8 8888      88                 `8.`888b8.`8888'        8 8888 8   `Y8o. `Y8888\s
+                               8 8888   `8 8888       ,8P  ` 8888     ,8P                  `8.`888`8.`88'         8 8888 8      `Y8o. `Y8\s
+                               8 8888    ` 8888     ,88'     8888   ,d8P                    `8.`8' `8,`'          8 8888 8         `Y8o.`\s
+                               8 8888       `8888888P'        `Y88888P'                      `8.`   `8'           8 8888 8            `Yo\s
+                        """);
     }
 
     public void setup() {
