@@ -1,4 +1,4 @@
-package zyLabs;
+package recursion;
 import java.util.Scanner;
 
 public class RecursiveMethods {
