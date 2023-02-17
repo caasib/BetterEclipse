@@ -69,5 +69,4 @@ public class BalancedNumber {
         }
         System.out.println(count);
     }
-
 }

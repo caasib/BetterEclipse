@@ -240,7 +240,7 @@ public class LyricPuzzle {
             return -1;
         }
         int indexOfSegment = (intArray[0] * columns) + intArray[1];
-        if (indexOfSegment == segments.size()) {
+        if (indexOfSegment >= segments.size()) {
             System.out.println("There isn't anything there!");
             return -1;
         }
