@@ -8,7 +8,7 @@ public class QuadraticTest {
         try {
             FileInputStream fileToTest = new FileInputStream("C:\\Users\\nketi\\IdeaProjects\\BetterEclipse\\src\\gradedQuadratic\\caasitest.txt");
             Scanner reader = new Scanner(fileToTest);
-            File fileToWrite = new File("C:\\Users\\nketi\\IdeaProjects\\BetterEclipse\\src\\gradedQuadratic\\resultsoftest.txt");
+            File fileToWrite = new File("C:\\Users\\nketi\\IdeaProjects\\BetterEclipse\\src\\gradedQuadratic\\Quadratic-Equations.txt");
             FileWriter writer = new FileWriter(fileToWrite);
             while (reader.hasNextLine()) {
                 QuadraticSolver quadratic = new QuadraticSolver(reader.nextInt(), reader.nextInt(), reader.nextInt());
