@@ -1,0 +1,10 @@
+No real number solution for the quadratic equation for x^2 + 2x + 5.
+The solutions for x^2 - 7x - 11 are:  x = -1.32, x = 8.32.
+The solution for 3x^2  is:  x = 0.00.
+The solutions for 7x^2 + 81x + 2 are:  x = -11.55, x = -0.02.
+The solutions for -9x^2 + 2x + 15 are:  x = -1.18, x = 1.41.
+No real number solution for the quadratic equation for 4x^2 + 23x + 1000.
+No real number solution for the quadratic equation for x^2 + 1.
+No real number solution for the quadratic equation for x^2 + 4.
+The solution for 2x^2  is:  x = 0.00.
+The solutions for -2727x^2 + 28374x + 1121231 are:  x = 2.95, x = 7.45.

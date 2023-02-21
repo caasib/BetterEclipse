@@ -42,8 +42,8 @@ public class QuadraticSolver {
         ArrayList<Double> solutions = new ArrayList<Double>();
         double posSolution, negSolution, discriminant;
         discriminant = Math.pow(b, 2) - (4 * a * c);
-        posSolution = (double)(-b + Math.sqrt(discriminant))/(2 * a);
-        negSolution = (double)(-b - Math.sqrt(discriminant))/(2 * a);
+        posSolution = (-b + Math.sqrt(discriminant))/(2 * a);
+        negSolution = (-b - Math.sqrt(discriminant))/(2 * a);
         if (!Double.isNaN(negSolution)) {
             solutions.add(negSolution);
         }
