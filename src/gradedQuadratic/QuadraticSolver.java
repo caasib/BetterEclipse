@@ -1,5 +1,6 @@
 package gradedQuadratic;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class QuadraticSolver {
     private int a, b, c;
@@ -53,6 +54,7 @@ public class QuadraticSolver {
             throw new NoRealSolutionException();
         }
         else {
+            Collections.sort(solutions);
             return solutions;
         }
     }
