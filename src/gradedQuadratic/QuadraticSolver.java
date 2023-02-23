@@ -67,11 +67,11 @@ public class QuadraticSolver {
                 summary = String.format("The solutions for %s are:  x = %.2f, x = %.2f.", this.equation, solutions.get(0), solutions.get(1));
             }
             else if (solutions.size() == 1) {
-                summary = String.format("The solution for %s is:  x = %.2f.", this.equation, solutions.get(0));
+                summary = String.format("The solution for %s is:  x = %.0f.", this.equation, solutions.get(0));
             }
         }
         catch (NoRealSolutionException e) {
-            summary = e.getMessage() + " for " + this.equation + ".";
+            summary = e.getMessage() + this.equation + ".";
         }
         return summary;
     }
