@@ -7,11 +7,11 @@ public interface SecureString {
 
     //Write an algorithm that processes a digitized String and returns a String
 
-    public String decrypter(String digitalPassword);
+    public String decryptDigitize(String digitalPassword);
 
     //Write your version of encrypting a String
-    public String encrypt(String password);
+    public String encryptString(String password);
 
     //Write your version of decrypting a String
-    public String decrypt(String encryptedPassword);
+    public String decryptString(String encryptedPassword);
 }

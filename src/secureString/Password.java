@@ -23,7 +23,7 @@ public class Password implements SecureString {
     }
 
     @Override
-    public String decrypter(String digitalPassword) {
+    public String decryptDigitize(String digitalPassword) {
         String original = "";
         for (int i = 0; i < digitalPassword.length(); i++) {
             original += Math.pow(((digitalPassword.charAt(i) * 5) - 2023), (double)1/7);
@@ -32,7 +32,7 @@ public class Password implements SecureString {
     }
 
     @Override
-    public String encrypt(String password) {
+    public String encryptString(String password) {
         String encrypted = "";
         String editedKey = key.substring(0, password.length());
         int baseIndex, keyIndex;
@@ -45,7 +45,7 @@ public class Password implements SecureString {
     }
 
     @Override
-    public String decrypt(String encryptedPassword) {
+    public String decryptString(String encryptedPassword) {
         String decrypted = "";
         String editedKey = key.substring(0, encryptedPassword.length());
         int keyIndex, encryptIndex;
