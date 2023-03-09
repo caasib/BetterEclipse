@@ -44,19 +44,18 @@ public class QuadraticSolver {
         discriminant = Math.pow(b, 2) - (4 * a * c);
         posSolution = (-b + Math.sqrt(discriminant))/(2 * a);
         negSolution = (-b - Math.sqrt(discriminant))/(2 * a);
-        if (!Double.isNaN(negSolution)) {
-            solutions.add(negSolution);
-        }
-        if (!Double.isNaN(posSolution) && Double.compare(posSolution, negSolution) != 0) {
-            solutions.add(posSolution);
-        }
-        if (Double.isNaN(posSolution) && Double.isNaN(negSolution)) {
+        if (discriminant < 0) {
             throw new NoRealSolutionException();
         }
-        else {
-            Collections.sort(solutions);
-            return solutions;
+        else if (discriminant == 0) {
+            solutions.add(posSolution);
         }
+        else if (discriminant > 0) {
+            solutions.add(posSolution);
+            solutions.add(negSolution);
+        }
+        Collections.sort(solutions);
+        return solutions;
     }
 
     public String printSolutions() {
