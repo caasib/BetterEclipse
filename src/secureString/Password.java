@@ -2,18 +2,20 @@ package secureString;
 import java.util.*;
 
 public class Password implements SecureString {
-    ArrayList<Integer> encryptDigit = new ArrayList<>();
-    int prime = 19;
-    int prm = 2;
-    int base;
     Random rand = new Random();
+    int[] primes = {7919, 6197, 4639, 5333, 7793};
+    int prime = primes[rand.nextInt(primes.length)];
+    int base = 3;
+    ArrayList<Integer> digitalEncrypt = new ArrayList<>();
+    HashMap<Integer, String> digitalDecrypt = new HashMap<>();
 
     @Override
     public String digitize(String password) {
         String encrypted = "";
         for (int i = 0; i < password.length(); i++) {
-            int num = (int)Math.pow(prm, password.charAt(i) - 96) % prime;
-            encryptDigit.add(num);
+            int num = (int)Math.pow(base, (password.charAt(i) - 100)) % prime;
+            digitalDecrypt.put(num, String.valueOf(password.charAt(i)));
+            digitalEncrypt.add(num);
             encrypted += num;
         }
         return encrypted;
@@ -22,17 +24,15 @@ public class Password implements SecureString {
     @Override
     public String decryptDigitize(String password) {
         String decrypted = "";
-        int randInt = rand.nextInt(prime);
-        for (int i = 0; i < encryptDigit.size(); i++) {
-            int num = (int)Math.pow(encryptDigit.get(i), randInt) % prime;
-            System.out.println(num);
-            decrypted += (char)(num + 96);
+        for (int i = 0; i < digitalEncrypt.size(); i++) {
+            decrypted += digitalDecrypt.get(digitalEncrypt.get(i));
         }
         return decrypted;
     }
 
     @Override
     public String encryptString(String password) {
+
         return null;
     }
 
@@ -43,9 +43,8 @@ public class Password implements SecureString {
 
     public static void main(String[] args) {
         Password pass = new Password();
-        String bruh = pass.digitize("apple");
+        String bruh = pass.digitize("hypertension");
         System.out.println(bruh);
-        System.out.println(pass.encryptDigit);
         System.out.println(pass.decryptDigitize(bruh));
     }
 }
