@@ -3,6 +3,7 @@ import java.util.*;
 
 public class Password implements SecureString {
     Random rand = new Random();
+    static Scanner scan = new Scanner(System.in);
     int[] primes = {7919, 6197, 4639, 5333, 7793};
     String[] words = {"lemon", "game", "elephant", "werewolf", "image"};
     String word = words[rand.nextInt(words.length)];
@@ -16,10 +17,18 @@ public class Password implements SecureString {
     public String digitize(String password) {
         String encrypted = "";
         for (int i = 0; i < password.length(); i++) {
-            int num = (int)Math.pow(base, (password.charAt(i) - 100)) % prime;
-            digitalDecrypt.put(num, String.valueOf(password.charAt(i)));
-            digitalEncrypt.add(num);
-            encrypted += num;
+            if (!Character.isDigit(password.charAt(i))) {
+                int num = (int) Math.pow(base, (password.charAt(i) - 100)) % prime;
+                digitalDecrypt.put(num, String.valueOf(password.charAt(i)));
+                digitalEncrypt.add(num);
+                encrypted += num;
+            }
+            else {
+                int num = (int)(Math.pow(base, password.charAt(i) - 50) % prime) + password.charAt(i);
+                digitalDecrypt.put(num, String.valueOf(password.charAt(i)));
+                digitalEncrypt.add(num);
+                encrypted += num;
+            }
         }
         return encrypted;
     }
@@ -43,7 +52,6 @@ public class Password implements SecureString {
         }
         for (int i = 0; i < password.length(); i++) {
             String newAlpha = alphabet.substring(alphabet.indexOf(word.charAt(i))) + alphabet.substring(0, alphabet.indexOf(word.charAt(i)));
-            //System.out.println(newAlpha);
             encrypted += newAlpha.charAt(alphabet.indexOf(password.charAt(i)));
         }
         return encrypted;
@@ -61,8 +69,13 @@ public class Password implements SecureString {
 
     public static void main(String[] args) {
         Password pass = new Password();
-        String bruh = pass.encryptString("hypertension");
-        System.out.println(bruh);
-        System.out.println(pass.decryptString(bruh));
+        System.out.println("Please input a password: ");
+        String userPass = scan.next();
+        String digitizePass = pass.digitize(userPass);
+        String encryptPass = pass.encryptString(userPass);
+        System.out.println("Encrypted digital password: " + digitizePass);
+        System.out.println("Decrypted digital password: " + pass.decryptDigitize(digitizePass));
+        System.out.println("Encrypted string password: " + encryptPass);
+        System.out.println("Decrypted string password: " + pass.decryptString(encryptPass));
     }
 }
