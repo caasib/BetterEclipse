@@ -13,16 +13,23 @@ public class PasswordGenerator implements ActionListener {
     private JLabel account = new JLabel("Account: ");
     private JLabel user = new JLabel("Username: ");
     private JLabel passLength = new JLabel("Password length: ");
+
     private JTextField accountBox = new JTextField(20);
     private JTextField userBox = new JTextField(20);
+
     private JRadioButton length8 = new JRadioButton("8");
     private JRadioButton length12 = new JRadioButton("12");
     private JRadioButton length16 = new JRadioButton("16");
+
     private ButtonGroup radios = new ButtonGroup();
+
     private JPanel buttonPanel = new JPanel();
     private JLabel generatePassword = new JLabel("Generate password: ");
     private JLabel password = new JLabel("");
     private JButton generate = new JButton("Generate");
+    private JButton saveToFile = new JButton("Save passwords");
+
+    private JFileChooser saveFile = new JFileChooser();
 
     public PasswordGenerator() {
         mainFrame.setSize(500, 500);
